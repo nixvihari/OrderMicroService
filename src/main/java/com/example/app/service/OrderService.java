@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.web.client.RestTemplate;
 import com.example.app.controller.OrderController;
 import com.example.app.interservice.RestHelper;
 import com.example.app.repo.Order;
@@ -14,6 +14,8 @@ import com.example.app.repo.OrderRepository;
 
 @Service
 public class OrderService {
+
+    private final RestTemplate restTemplate;
 
 	private final OrderController orderController;
 
@@ -23,8 +25,9 @@ public class OrderService {
 	@Autowired
 	private RestHelper restHelper;
 
-	OrderService(OrderController orderController) {
+	OrderService(OrderController orderController, RestTemplate restTemplate) {
 		this.orderController = orderController;
+		this.restTemplate = restTemplate;
 	}
 
 	public List<Order> getOrders() {
@@ -44,10 +47,21 @@ public class OrderService {
 			return null;
 		}
 		
+		//set order date
 		order.setOrderDate(LocalDate.now());
+		
+		//Calc and set order value
 		Double orderValue = orderQuantity * restHelper.getProductPriceById(order.getProductId());
 		order.setOrderValue(orderValue);
 		
-		return orderRepository.save(order);
+		//Save order in DB
+		Order savedOrder = orderRepository.save(order);
+		
+		//deduct product quantity
+		restHelper.updateProductQuantityById(
+				savedOrder.getProductId(), 
+				productQuantity - orderQuantity);
+		
+		return savedOrder;
 	}
 }

@@ -14,6 +14,8 @@ public class RestHelper {
 	
 	
 	//Product calls
+	
+	//Get Product Price
 	public Double getProductPriceById(Long productId) {
 		Double price = restTemplate.getForObject(
 				PRODUCT_SERVICE_BASE_URL + "/getProductPriceById/{productId}",
@@ -22,12 +24,20 @@ public class RestHelper {
 		return price;
 	}
 	
+	//Get Product Quantity
 	public Integer getProductQuantityById(Long productId) {
 		Integer quantity = restTemplate.getForObject(
 				PRODUCT_SERVICE_BASE_URL + "/getProductQuantityById/{productId}",
 				Integer.class ,
 				productId);
 		return quantity;
+	}
+	
+	//Update Product Quantity
+	public void updateProductQuantityById(Long productId, Integer updatedQuantity) {
+		restTemplate.patchForObject(
+				PRODUCT_SERVICE_BASE_URL + "/updateProductQuantityById/{prodId}-{quantity}",
+				null, null, productId, updatedQuantity);
 	}
 
 }
