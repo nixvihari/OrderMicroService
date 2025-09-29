@@ -1,6 +1,12 @@
 package com.example.app.interservice;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -35,9 +41,22 @@ public class RestHelper {
 	
 	//Update Product Quantity
 	public void updateProductQuantityById(Long productId, Integer updatedQuantity) {
-		restTemplate.patchForObject(
-				PRODUCT_SERVICE_BASE_URL + "/updateProductQuantityById/{prodId}-{quantity}",
-				null, null, productId, updatedQuantity);
+		
+		String url = PRODUCT_SERVICE_BASE_URL + "/updateProductQuantityById/{productId}-{updatedQuantity}";
+
+		Map<String, Object> uriVars = Map.of("productId", productId, "updatedQuantity", updatedQuantity);
+
+		
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<?> requestEntity = new HttpEntity<>(null, header);
+		
+		restTemplate.exchange(
+				url, 
+				HttpMethod.PUT,
+				requestEntity, 
+				Void.class, 
+				uriVars);
 	}
 
 }

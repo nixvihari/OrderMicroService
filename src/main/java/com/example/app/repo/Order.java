@@ -1,6 +1,9 @@
 package com.example.app.repo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -26,20 +29,19 @@ public class Order {
 	@Column(name = "user_id", nullable = false)
 	private Long userId;
 	
-	@JsonIgnore
+	@CreationTimestamp
 	@Column(name = "order_date")
-	private LocalDate orderDate;
+	private LocalDateTime orderDate;
 	
 	@Column(name = "order_quantity")
 	private Integer orderQuantity;
 	
-	@JsonIgnore
 	@Column(name = "order_value")
 	private Double orderValue;
 
 	public Order() {}
 
-	public Order(Long orderNo, Long productId, Long userId, LocalDate orderDate, Integer orderQuantity,
+	public Order(Long orderNo, Long productId, Long userId, LocalDateTime orderDate, Integer orderQuantity,
 			Double orderValue) {
 		this.orderNo = orderNo;
 		this.productId = productId;
@@ -73,11 +75,11 @@ public class Order {
 		this.userId = userId;
 	}
 
-	public LocalDate getOrderDate() {
+	public LocalDateTime getOrderDate() {
 		return orderDate;
 	}
 
-	public void setOrderDate(LocalDate orderDate) {
+	public void setOrderDate(LocalDateTime orderDate) {
 		this.orderDate = orderDate;
 	}
 

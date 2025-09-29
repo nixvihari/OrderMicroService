@@ -1,0 +1,8 @@
+CREATE TABLE orders(
+	order_no BIGINT AUTO_INCREMENT PRIMARY KEY,
+	product_id BIGINT NOT NULL,
+	user_id BIGINT NOT NULL,
+	order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	order_quantity INT,
+	order_value DOUBLE
+);

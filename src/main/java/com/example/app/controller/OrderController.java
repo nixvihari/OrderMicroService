@@ -32,7 +32,7 @@ public class OrderController {
 	}
 	
 	@PostMapping("/newOrder")
-	public Order newOrder(@RequestBody Order order) {
+	public Optional<Order> newOrder(@RequestBody Order order) {
 		return orderService.newOrder(order);
 	}
 	
