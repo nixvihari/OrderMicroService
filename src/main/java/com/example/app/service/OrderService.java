@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.app.interservice.RestHelper;
+import com.example.app.interservice.EurekaHelper;
 import com.example.app.repo.Order;
 import com.example.app.repo.OrderRepository;
 
@@ -18,7 +18,7 @@ public class OrderService {
 	private OrderRepository orderRepository;
 	
 	@Autowired
-	private RestHelper restHelper;
+	private EurekaHelper eurekaHelper;
 
 	//Basic CRUD
 	public List<Order> getOrders() {
@@ -31,7 +31,7 @@ public class OrderService {
 	
 	public Optional<Order> newOrder(Order order) {
 		Integer orderQuantity = order.getOrderQuantity();
-		Integer productQuantity = restHelper.getProductQuantityById(order.getProductId());
+		Integer productQuantity = eurekaHelper.getProductQuantityById(order.getProductId());
 		System.out.println("print product quantity" + productQuantity);
 		if (orderQuantity > productQuantity) {
 			//handle or throw exception
@@ -43,14 +43,14 @@ public class OrderService {
 		order.setOrderDate(LocalDateTime.now());
 		
 		//Calc and set order value
-		Double orderValue = orderQuantity * restHelper.getProductPriceById(order.getProductId());
+		Double orderValue = orderQuantity * eurekaHelper.getProductPriceById(order.getProductId());
 		order.setOrderValue(orderValue);
 		
 		//Save order in DB
 		Order savedOrder = orderRepository.save(order);
 		System.out.println("print order.id" + savedOrder.getOrderNo());
 		//deduct product quantity
-		restHelper.updateProductQuantityById(
+		eurekaHelper.updateProductQuantityById(
 				savedOrder.getProductId(), 
 				productQuantity - orderQuantity);
 		System.out.println("finally returning savedorder" + savedOrder.getOrderValue());
