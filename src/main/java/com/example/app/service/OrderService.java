@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.app.interservice.EurekaHelper;
+import com.example.app.model.ProductQuantity;
 import com.example.app.repo.Order;
 import com.example.app.repo.OrderRepository;
 
@@ -57,6 +58,17 @@ public class OrderService {
 		return Optional.of(savedOrder);
 	}
 	
-	
+	public void deleteOrder(Long orderId) {
+		Optional<Order> order = getOrderById(orderId);
+		orderRepository.deleteById(orderId);
+		
+		//update stock on order deletion/cancellation
+		if (order.isPresent()) {
+			Integer productQuantity = eurekaHelper.getProductQuantityById(order.get().getProductId());
+			eurekaHelper.updateProductQuantityById(
+					order.get().getProductId(),
+					productQuantity + order.get().getOrderQuantity());
+		}
+	}
 	
 }
